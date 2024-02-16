@@ -21,10 +21,29 @@ public class ClanDataExporterPanel extends PluginPanel implements ActionListener
     private final JLabel previewLabel;
     private final JButton exportButton;
     private final JButton fileSelectionButton;
+    private final JButton refreshButton;
+
+    private final JCheckBox column1Checkbox;
+    private final JCheckBox column2Checkbox;
+    private final JCheckBox nameCheckbox;
+    private final JCheckBox rankCheckbox;
     private final JScrollPane scrollPane;
     @Setter
     @Getter
     private JTextArea textArea;
+
+    public boolean getColumn1Checkbox(){
+        return this.column1Checkbox.isSelected();
+    }
+    public boolean getColumn2Checkbox(){
+        return this.column2Checkbox.isSelected();
+    }
+    public boolean getNameCheckbox(){
+        return this.nameCheckbox.isSelected();
+    }
+    public boolean getRankCheckbox(){
+        return this.rankCheckbox.isSelected();
+    }
     public ClanDataExporterPanel(ClanDataExporterPlugin plugin){
         this.plugin = plugin;
         setLayout(new MigLayout("", "[350px]", "[220.00px][183.00px]"));
@@ -36,7 +55,11 @@ public class ClanDataExporterPanel extends PluginPanel implements ActionListener
         textField = new JTextField();
         textArea = new JTextArea();
         scrollPane = new JScrollPane();
-
+        refreshButton = new JButton("");
+        column1Checkbox = new JCheckBox("Column 1");
+        column2Checkbox = new JCheckBox("Column 2");
+        nameCheckbox = new JCheckBox("Name");
+        rankCheckbox = new JCheckBox("Rank");
         exportButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -65,6 +88,16 @@ public class ClanDataExporterPanel extends PluginPanel implements ActionListener
                     plugin.setDestinationFile(destFile.getAbsolutePath());
                 }else{
                     //throw an error or something IDK
+                }
+            }
+        });
+        refreshButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try{
+                    plugin.refresh();
+                }catch(Exception ex){
+                    //add error messaging
                 }
             }
         });
@@ -101,7 +134,32 @@ public class ClanDataExporterPanel extends PluginPanel implements ActionListener
         fileSelectionButton.setBounds(191, 11, 25, 25);
         exportControlPane.add(fileSelectionButton);
 
+        refreshButton.setToolTipText("Refresh");
+        refreshButton.setIcon(new ImageIcon("refresh_icon.png"));
+        refreshButton.setBounds(106, 61, 25, 25);
+        exportControlPane.add(refreshButton);
+
+
+        column1Checkbox.setToolTipText("Export the 1st column");
+        column1Checkbox.setBounds(106, 93, 97, 23);
+        exportControlPane.add(column1Checkbox);
+
+
+        column2Checkbox.setToolTipText("Export the 2nd column");
+        column2Checkbox.setBounds(106, 119, 97, 23);
+        exportControlPane.add(column2Checkbox);
+
+
+        rankCheckbox.setToolTipText("Export player ranks");
+        rankCheckbox.setBounds(10, 119, 97, 23);
+        exportControlPane.add(rankCheckbox);
+
+
+        nameCheckbox.setToolTipText("Export player names");
+        nameCheckbox.setBounds(10, 93, 97, 23);
+        exportControlPane.add(nameCheckbox);
     }
+
     @Override
     public void actionPerformed(ActionEvent e) {
 

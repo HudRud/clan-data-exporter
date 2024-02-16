@@ -66,7 +66,6 @@ public class ClanDataExporterPlugin extends Plugin
 		BufferedImage icon = ImageUtil.loadImageResource(getClass(),"plugin_icon.png");
 		navigationButton = NavigationButton.builder().tooltip("Clan data exporter").icon(icon).panel(panel).build();
 		clientToolbar.addNavigation(navigationButton);
-
 		//Initialise month name to number converter
 		for(int i = 0;i < shorthands.length;i++) {
 			months.put(shorthands[i], String.format("%02d", i + 1));
@@ -90,11 +89,16 @@ public class ClanDataExporterPlugin extends Plugin
 	}
 	public void tester(){
 
-
-
 		clientThread.invokeLater(this::printToCSV);
 
 	}
+	public void refresh(){
+		clientThread.invokeLater(this::fetchClanData);
+	}
+	public void setConfigBoolean(String key, boolean value){
+		configManager.setConfiguration("exporter",key,value);
+	}
+
 	private void fetchClanData(){
 		//client.addChatMessage(ChatMessageType.GAMEMESSAGE,"","tester","");
 		Widget[] column1 = this.client.getWidget(45416458).getChildren();
@@ -125,15 +129,20 @@ public class ClanDataExporterPlugin extends Plugin
 			String rank = cs.titleForRank(cs.findMember(name).getRank()).getName();
 			String column2Value = column2List.get(i);
 			String column3Value = column3List.get(i);
-			String csvEntry = name + "," + rank + "," + column2Value + "," + column3Value;
-			entryList.add(csvEntry);
+			String csvEntry = (panel.getNameCheckbox() ? name + "," : "") + (panel.getRankCheckbox() ? rank + "," : "") + (panel.getColumn1Checkbox() ? column2Value + "," : "") + (panel.getColumn2Checkbox() ? column3Value + ",": "");
+			StringBuilder sb = new StringBuilder(csvEntry);
+			if(csvEntry != null &&!csvEntry.trim().isEmpty()){
+			sb.replace(csvEntry.lastIndexOf(","), csvEntry.lastIndexOf(",")+1,"");
+			entryList.add(sb.toString());}
 		}
-		panel.generatePreview(entryList);
+		if(entryList != null && !entryList.isEmpty()){
+		panel.generatePreview(entryList);}
 	}
 	private String osrsDateToCSVConverter(String date){
 		String[] dateCompound = date.split("-");
 		if(dateCompound.length > 1 && dateCompound[1] != null && !dateCompound[1].isEmpty()){
-		return String.join(".",months.get(dateCompound[1]));
+			dateCompound[1] = months.get(dateCompound[1]);
+		return String.join(".",dateCompound);
 		}else {
 			return date;
 		}
