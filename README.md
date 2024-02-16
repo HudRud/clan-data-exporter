@@ -1,2 +1,4 @@
-# Example
-An example greeter plugin
+# Clan Data Exporter
+## TODO
+- Cleanup
+- 
