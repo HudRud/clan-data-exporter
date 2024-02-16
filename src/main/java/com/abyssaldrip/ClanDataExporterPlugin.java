@@ -42,12 +42,13 @@ import java.util.HashMap;
 @Slf4j
 public class ClanDataExporterPlugin extends Plugin
 {
-	@Setter
+
 	private String destinationFile;
 	private final String[]shorthands = {"Jan","Feb","Mar","Apr","May","June","July","Aug","Sept","Oct","Nov","Dec"};
 	private HashMap<String,String> months = new HashMap<String, String>();
 	private NavigationButton navigationButton;
 	private ClanDataExporterPanel panel;
+	private ArrayList<String> entryList;
 	@Inject
 	ClientToolbar clientToolbar;
 	@Inject
@@ -60,7 +61,11 @@ public class ClanDataExporterPlugin extends Plugin
 
 	@Inject
 	private ClanDataExporterConfig config;
+	public void setDestinationFile(String destinationFile) {
+		this.destinationFile = destinationFile;
+		panel.setTextInDestinationField(destinationFile);
 
+	}
 	@Override
 	protected void startUp() throws Exception
 	{
@@ -92,7 +97,11 @@ public class ClanDataExporterPlugin extends Plugin
 
 	}
 	public void tester(){
-		clientThread.invokeLater(this::fetchClanData);
+
+
+
+		clientThread.invokeLater(this::printToCSV);
+
 	}
 	private void fetchClanData(){
 		//client.addChatMessage(ChatMessageType.GAMEMESSAGE,"","tester","");
@@ -113,7 +122,7 @@ public class ClanDataExporterPlugin extends Plugin
 			}
 		}
 		ClanSettings cs = client.getClanSettings();
-		ArrayList<String> entryList = new ArrayList<String>();
+		entryList = new ArrayList<String>();
 		for(int i = 0; i < members.size(); i++){
 			String name = members.get(i);
 			String rank = cs.titleForRank(cs.findMember(name).getRank()).getName();
@@ -121,10 +130,7 @@ public class ClanDataExporterPlugin extends Plugin
 			String csvEntry = name + "," + rank + "," + joinDate;
 			entryList.add(csvEntry);
 		}
-		try{
-		printToCSV(entryList);}catch (IOException e){
-			e.printStackTrace();
-		}
+		panel.generatePreview(entryList);
 	}
 	private String osrsDateToCSVConverter(String date){
 		String[] dateCompound = date.split("-");
@@ -132,18 +138,29 @@ public class ClanDataExporterPlugin extends Plugin
 		return String.join(".",dateCompound);
 
 	}
-	private void printToCSV(ArrayList<String> list) throws IOException {
-		BufferedWriter bw = new BufferedWriter(new FileWriter("test.csv"));
-		for(String s : list){
-			bw.write(s);
-			bw.newLine();
-		}
-		bw.close();
-	}
-	/*@Subscribe
-	public void onWidgetLoaded(WidgetLoaded widgetLoaded){
+	private void printToCSV()  {
+		try {if(destinationFile != null && !destinationFile.trim().isEmpty()){
+			BufferedWriter bw = new BufferedWriter(new FileWriter(destinationFile));
+			for(String s : entryList){
 
-	}*/
+                    bw.write(s);
+
+                bw.newLine();
+			}
+			bw.close();
+		}else{
+			//again, throw an error or something
+			log.info(destinationFile);
+		}} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+	}
+	@Subscribe
+	public void onWidgetLoaded(WidgetLoaded widgetLoaded){
+		if(widgetLoaded.getGroupId() == 693){
+			fetchClanData();
+		}
+	}
 
 	@Provides
 	ClanDataExporterConfig provideConfig(ConfigManager configManager)
