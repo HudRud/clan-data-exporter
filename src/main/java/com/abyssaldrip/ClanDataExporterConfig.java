@@ -4,16 +4,23 @@ import net.runelite.client.config.Config;
 import net.runelite.client.config.ConfigGroup;
 import net.runelite.client.config.ConfigItem;
 
-@ConfigGroup("example")
+@ConfigGroup("exporter")
 public interface ClanDataExporterConfig extends Config
 {
 	@ConfigItem(
-		keyName = "greeting",
-		name = "Welcome Greeting",
-		description = "The message to show to the user when they login"
+		keyName = "File name",
+		name = "File name",
+		description = "Select an output file"
 	)
+
 	default String greeting()
 	{
-		return "Hello";
+		return "";
 	}
+	@ConfigItem(
+			keyName = "checkbox",
+			name = "Add current date",
+			description = "Adds current date to file name"
+	)
+	default  boolean checkbox(){return false;}
 }
