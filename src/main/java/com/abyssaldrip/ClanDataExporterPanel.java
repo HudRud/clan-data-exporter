@@ -2,10 +2,10 @@ package com.abyssaldrip;
 
 import lombok.Getter;
 import lombok.Setter;
+import net.miginfocom.swing.MigLayout;
 import net.runelite.client.ui.PluginPanel;
 
 import javax.swing.*;
-import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
@@ -21,17 +21,13 @@ public class ClanDataExporterPanel extends PluginPanel implements ActionListener
     private final JLabel previewLabel;
     private final JButton exportButton;
     private final JButton fileSelectionButton;
+    private final JScrollPane scrollPane;
     @Setter
     @Getter
     private JTextArea textArea;
     public ClanDataExporterPanel(ClanDataExporterPlugin plugin){
         this.plugin = plugin;
-        GridBagLayout gridBagLayout = new GridBagLayout();
-        gridBagLayout.columnWidths = new int[]{133, 36, 91, 99, 0};
-        gridBagLayout.rowHeights = new int[]{23, 23, 40, 20, 490, 0};
-        gridBagLayout.columnWeights = new double[]{0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
-        gridBagLayout.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
-        setLayout(gridBagLayout);
+        setLayout(new MigLayout("", "[350px]", "[220.00px][183.00px]"));
         this.setFocusable(true);
         destinationFileLabel = new JLabel("Destination file");
         previewLabel = new JLabel("Preview");
@@ -39,6 +35,7 @@ public class ClanDataExporterPanel extends PluginPanel implements ActionListener
         fileSelectionButton = new JButton("...");
         textField = new JTextField();
         textArea = new JTextArea();
+        scrollPane = new JScrollPane();
 
         exportButton.addActionListener(new ActionListener() {
             @Override
@@ -71,53 +68,39 @@ public class ClanDataExporterPanel extends PluginPanel implements ActionListener
                 }
             }
         });
-
-        GridBagConstraints gbc_textField = new GridBagConstraints();
-        gbc_textField.fill = GridBagConstraints.BOTH;
-        gbc_textField.insets = new Insets(0, 0, 5, 5);
-        gbc_textField.gridwidth = 3;
-        gbc_textField.gridx = 0;
-        gbc_textField.gridy = 0;
-        add(textField,gbc_textField);
-
-        GridBagConstraints gbc_fileSelectionButton = new GridBagConstraints();
-        gbc_fileSelectionButton.anchor = GridBagConstraints.NORTHWEST;
-        gbc_fileSelectionButton.insets = new Insets(0, 0, 5, 0);
-        gbc_fileSelectionButton.gridx = 3;
-        gbc_fileSelectionButton.gridy = 0;
-        add(fileSelectionButton,gbc_fileSelectionButton);
-
-        destinationFileLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        GridBagConstraints gbc_lblNewLabel = new GridBagConstraints();
-        gbc_lblNewLabel.fill = GridBagConstraints.HORIZONTAL;
-        gbc_lblNewLabel.insets = new Insets(0, 0, 5, 5);
-        gbc_lblNewLabel.gridx = 0;
-        gbc_lblNewLabel.gridy = 1;
-        add(destinationFileLabel,gbc_lblNewLabel);
-
-        GridBagConstraints gbc_exportButton = new GridBagConstraints();
-        gbc_exportButton.anchor = GridBagConstraints.NORTH;
-        gbc_exportButton.fill = GridBagConstraints.HORIZONTAL;
-        gbc_exportButton.insets = new Insets(0, 0, 5, 5);
-        gbc_exportButton.gridx = 2;
-        gbc_exportButton.gridy = 1;
-        add(exportButton,gbc_exportButton);
-
+        JPanel displayPane = new JPanel();
+        add(displayPane, "cell 0 0,grow");
+        displayPane.setLayout(null);
+        //label preview
+        previewLabel.setBounds(0, 0, 54, 14);
+        displayPane.add(previewLabel);
         previewLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        GridBagConstraints gbc_lblNewLabel_1 = new GridBagConstraints();
-        gbc_lblNewLabel_1.fill = GridBagConstraints.BOTH;
-        gbc_lblNewLabel_1.insets = new Insets(0, 0, 5, 0);
-        gbc_lblNewLabel_1.gridwidth = 4;
-        gbc_lblNewLabel_1.gridx = 0;
-        gbc_lblNewLabel_1.gridy = 3;
-        add(previewLabel,gbc_lblNewLabel_1);
 
-        GridBagConstraints gbc_textArea = new GridBagConstraints();
-        gbc_textArea.fill = GridBagConstraints.BOTH;
-        gbc_textArea.gridwidth = 4;
-        gbc_textArea.gridx = 0;
-        gbc_textArea.gridy = 4;
-        add(textArea,gbc_textArea);
+        JScrollPane scrollPane = new JScrollPane();
+        scrollPane.setBounds(0, 15, 230, 205);
+        displayPane.add(scrollPane);
+        scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+
+        scrollPane.setViewportView(textArea);
+        textArea.setLineWrap(true);
+
+        JPanel exportControlPane = new JPanel();
+        add(exportControlPane, "cell 0 1,grow");
+        exportControlPane.setLayout(null);
+        exportButton.setBounds(10, 61, 86, 23);
+        exportControlPane.add(exportButton);
+        //label destination
+        destinationFileLabel.setBounds(8, 36, 95, 14);
+        exportControlPane.add(destinationFileLabel);
+        destinationFileLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        //file input field
+        textField.setBounds(10, 11, 180, 25);
+        exportControlPane.add(textField);
+        textField.setColumns(10);
+        //file selection button
+        fileSelectionButton.setBounds(191, 11, 25, 25);
+        exportControlPane.add(fileSelectionButton);
+
     }
     @Override
     public void actionPerformed(ActionEvent e) {

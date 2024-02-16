@@ -97,37 +97,46 @@ public class ClanDataExporterPlugin extends Plugin
 	}
 	private void fetchClanData(){
 		//client.addChatMessage(ChatMessageType.GAMEMESSAGE,"","tester","");
-		Widget clanMembers = this.client.getWidget(45416458);
-		Widget clanJoined = this.client.getWidget(45416461);
-		Widget[] memberList = clanMembers.getChildren();
-		Widget[] joinedList = clanJoined.getChildren();
-		ArrayList<String> members = new ArrayList<String>();
-		ArrayList<String> joined = new ArrayList<String>();
-		for(Widget w : memberList){
+		Widget[] column1 = this.client.getWidget(45416458).getChildren();
+		Widget[] column2 = this.client.getWidget(45416459).getChildren();
+		Widget[] column3 = this.client.getWidget(45416461).getChildren();
+		ArrayList<String> column1List = new ArrayList<String>();
+		ArrayList<String> column2List = new ArrayList<String>();
+		ArrayList<String> column3List = new ArrayList<String>();
+		for(Widget w : column1){
 			if(w.getType() == WidgetType.TEXT){
-				members.add(w.getText());
+				column1List.add(w.getText());
 			}
 		}
-		for(Widget w : joinedList){
+		for(Widget w : column2){
 			if(w.getType() == WidgetType.TEXT){
-				joined.add(w.getText());
+				column2List.add(osrsDateToCSVConverter(w.getText()));
+			}
+		}
+		for(Widget w : column3){
+			if(w.getType() == WidgetType.TEXT){
+				column3List.add(osrsDateToCSVConverter(w.getText()));
 			}
 		}
 		ClanSettings cs = client.getClanSettings();
 		entryList = new ArrayList<String>();
-		for(int i = 0; i < members.size(); i++){
-			String name = members.get(i);
+		for(int i = 0; i < column1List.size(); i++){
+			String name = column1List.get(i);
 			String rank = cs.titleForRank(cs.findMember(name).getRank()).getName();
-			String joinDate = osrsDateToCSVConverter(joined.get(i));
-			String csvEntry = name + "," + rank + "," + joinDate;
+			String column2Value = column2List.get(i);
+			String column3Value = column3List.get(i);
+			String csvEntry = name + "," + rank + "," + column2Value + "," + column3Value;
 			entryList.add(csvEntry);
 		}
 		panel.generatePreview(entryList);
 	}
 	private String osrsDateToCSVConverter(String date){
 		String[] dateCompound = date.split("-");
-		dateCompound[1] = months.get(dateCompound[1]);
-		return String.join(".",dateCompound);
+		if(dateCompound.length > 1 && dateCompound[1] != null && !dateCompound[1].isEmpty()){
+		return String.join(".",months.get(dateCompound[1]));
+		}else {
+			return date;
+		}
 
 	}
 	private void printToCSV()  {
