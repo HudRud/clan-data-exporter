@@ -17,7 +17,7 @@ dependencies {
 
 	compileOnly 'org.projectlombok:lombok:1.18.30'
 	annotationProcessor 'org.projectlombok:lombok:1.18.30'
-	implementation group: 'com.miglayout', name: 'miglayout-swing', version: '5.0'
+	implementation group: 'com.miglayout', name: 'miglayout-swing', version: '11.3'
 	testImplementation 'junit:junit:4.12'
 	testImplementation group: 'net.runelite', name:'client', version: runeLiteVersion
 	testImplementation group: 'net.runelite', name:'jshell', version: runeLiteVersion
