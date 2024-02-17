@@ -2,7 +2,6 @@ package com.abyssaldrip;
 
 import lombok.Getter;
 import lombok.Setter;
-import net.miginfocom.swing.MigLayout;
 import net.runelite.client.ui.PluginPanel;
 
 import javax.swing.*;
@@ -36,7 +35,12 @@ public class ClanDataExporterPanel extends PluginPanel implements ActionListener
 
     public ClanDataExporterPanel(ClanDataExporterPlugin plugin) {
         this.plugin = plugin;
-        setLayout(new MigLayout("", "[350px]", "[220.00px][183.00px]"));
+        GridBagLayout gridBagLayout = new GridBagLayout();
+        gridBagLayout.columnWidths = new int[]{240, 0};
+        gridBagLayout.rowHeights = new int[] {287, 176, 0};
+        gridBagLayout.columnWeights = new double[]{0.0, Double.MIN_VALUE};
+        gridBagLayout.rowWeights = new double[]{0.0, 0.0, Double.MIN_VALUE};
+        setLayout(gridBagLayout);
         this.setFocusable(true);
         destinationFileLabel = new JLabel("Destination file");
         previewLabel = new JLabel("Preview");
@@ -81,13 +85,18 @@ public class ClanDataExporterPanel extends PluginPanel implements ActionListener
         });
         refreshButton.addActionListener(e -> plugin.refresh());
         JPanel displayPane = new JPanel();
-        add(displayPane, "cell 0 0,grow");
+        GridBagConstraints gbc_displayPane = new GridBagConstraints();
+        gbc_displayPane.fill = GridBagConstraints.BOTH;
+        gbc_displayPane.insets = new Insets(0, 0, 5, 0);
+        gbc_displayPane.gridx = 0;
+        gbc_displayPane.gridy = 0;
+        add(displayPane,gbc_displayPane);
         displayPane.setLayout(null);
-        previewLabel.setBounds(0, 0, 54, 14);
+        previewLabel.setBounds(10, 52, 54, 14);
         displayPane.add(previewLabel);
         previewLabel.setHorizontalAlignment(SwingConstants.CENTER);
 
-        scrollPane.setBounds(0, 15, 215, 205);
+        scrollPane.setBounds(10, 66, 204, 205);
         scrollPane.setViewportBorder(new LineBorder(new Color(192, 192, 192)));
         displayPane.add(scrollPane);
         scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
@@ -97,7 +106,11 @@ public class ClanDataExporterPanel extends PluginPanel implements ActionListener
         textArea.setLineWrap(true);
 
         JPanel exportControlPane = new JPanel();
-        add(exportControlPane, "cell 0 1,grow");
+        GridBagConstraints gbc_exportControlPane = new GridBagConstraints();
+        gbc_exportControlPane.fill = GridBagConstraints.BOTH;
+        gbc_exportControlPane.gridx = 0;
+        gbc_exportControlPane.gridy = 1;
+        add(exportControlPane,gbc_exportControlPane);
         exportControlPane.setLayout(null);
         exportButton.setToolTipText("Export data to file");
         exportButton.setBounds(10, 61, 86, 23);
