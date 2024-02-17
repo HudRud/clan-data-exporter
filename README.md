@@ -1,10 +1,6 @@
-# Clan Data Exporter
-
----
+# Clan Data Exporter v.1.1
 A plugin for exporting clan data in .csv form
 ## User guide
-
----
 ### 1. Open the exporter from your navigation bar
 ![Exporter icon highlighted in runelite navigation bar](userguide_resources/exporter_navbar.png)
 
